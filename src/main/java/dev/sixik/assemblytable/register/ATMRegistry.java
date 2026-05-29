@@ -26,6 +26,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -44,6 +46,7 @@ public class ATMRegistry {
     public static DeferredBlock<Block> LASER_BASIC;
     public static DeferredBlock<Block> LASER_BASIC_WARMUP;
     public static Supplier<BlockEntityType<LaserBlockEntity>> LASER_TYPE;
+    private static final List<DeferredBlock<? extends Block>> LASER_BLOCKS = new ArrayList<>();
 
 
     public static DeferredHolder<MenuType<?>, MenuType<AssemblyTableMenu>> ASSEMBLY_TABLE_MENU;
@@ -58,7 +61,7 @@ public class ATMRegistry {
 
         ASSEMBLY_TABLE_MENU = registerMenuType("assembly_table_menu", AssemblyTableMenu::new);
 
-        LASER_BASIC = registerBlock("laser_basic", (properties) ->
+        LASER_BASIC = registerLaserBlock("laser_basic", (properties) ->
                 new LaserBlock(properties, LaserConfig.builder()
                         .targetRange(6)
                         .energyBuffer(1000)
@@ -69,7 +72,7 @@ public class ATMRegistry {
                         .build())
         );
 
-        LASER_BASIC_WARMUP = registerBlock("laser_basic_warmup", (properties) ->
+        LASER_BASIC_WARMUP = registerLaserBlock("laser_basic_warmup", (properties) ->
                 new LaserBlock(properties, LaserConfig.builder()
                         .targetRange(6)
                         .energyBuffer(1000)
@@ -98,12 +101,19 @@ public class ATMRegistry {
         ATMRecipes.registerType(modEventBus);
     }
 
-
-
+    public static List<DeferredBlock<? extends Block>> getLaserBlocks() {
+        return List.copyOf(LASER_BLOCKS);
+    }
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
         DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);
         registerBlockItem(name, toReturn);
+        return toReturn;
+    }
+
+    private static <T extends Block> DeferredBlock<T> registerLaserBlock(String name, Function<BlockBehaviour.Properties, T> function) {
+        DeferredBlock<T> toReturn = registerBlock(name, function);
+        LASER_BLOCKS.add(toReturn);
         return toReturn;
     }
 

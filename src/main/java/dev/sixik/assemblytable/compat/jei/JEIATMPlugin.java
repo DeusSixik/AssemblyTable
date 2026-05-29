@@ -14,6 +14,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
@@ -44,8 +45,11 @@ public class JEIATMPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalysts(CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE,
-                ATMRegistry.ASSEMBLY_TABLE.get(), ATMRegistry.LASER_BASIC.get());
+        registration.addRecipeCatalyst(new ItemStack(ATMRegistry.ASSEMBLY_TABLE.get()), CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE);
+
+        for (var laserBlock : ATMRegistry.getLaserBlocks()) {
+            registration.addRecipeCatalyst(new ItemStack(laserBlock.get()), CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE);
+        }
     }
 
     @Override

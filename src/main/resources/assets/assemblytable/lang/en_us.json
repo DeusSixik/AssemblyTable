@@ -1,6 +1,11 @@
 {
-  "block.assemblytable.assembly_table" : "Assembly Table",
-  "block.assemblytable.laser_basic" : "Laser",
-  "block.assemblytable.laser_basic_warmup" : "Laser",
-  "be.assembly_tableBlock.name" : "Assembly Table"
+  "block.assemblytable.assembly_table": "Assembly Table",
+  "block.assemblytable.laser_basic": "Laser",
+  "block.assemblytable.laser_basic_warmup": "Laser (Warmup)",
+  "be.assembly_tableBlock.name": "Assembly Table",
+  "itemGroup.assemblytable.main": "AssemblyTable",
+  "tooltip.assemblytable.hold_shift": "Hold Shift for laser stats",
+  "tooltip.assemblytable.laser.capacity": "Capacity",
+  "tooltip.assemblytable.laser.warmup_time": "Warmup Time",
+  "tooltip.assemblytable.laser.output": "Output"
 }

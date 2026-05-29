@@ -8,6 +8,10 @@ import dev.sixik.assemblytable.blockentity.LaserBlockEntity;
 import dev.sixik.assemblytable.register.ATMRegistry;
 import dev.sixik.assemblytable.utils.Vec4i;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -15,6 +19,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -26,6 +33,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class LaserBlock extends BaseEntityBlock {
 
@@ -129,6 +138,22 @@ public class LaserBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        if (!flag.hasShiftDown()) {
+            tooltip.add(Component.translatable("tooltip.assemblytable.hold_shift").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x777777))));
+            return;
+        }
+
+        tooltip.add(formatStat("tooltip.assemblytable.laser.capacity", laserConfig.energyBuffer() + " FE"));
+
+        if (laserConfig.hasWarmup()) {
+            tooltip.add(formatStat("tooltip.assemblytable.laser.warmup_time", formatSeconds(laserConfig.warmup().ticks())));
+        }
+
+        tooltip.add(formatStat("tooltip.assemblytable.laser.output", laserConfig.maxTransferPerTick() + " FE/t"));
+    }
+
+    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new LaserBlockEntity(blockPos, blockState, laserConfig);
     }
@@ -171,6 +196,21 @@ public class LaserBlock extends BaseEntityBlock {
             }
         };
         return Shapes.or(stand, body);
+    }
+
+    private static MutableComponent formatStat(String key, String value) {
+        return Component.translatable(key)
+                .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x8A8A8A)))
+                .append(Component.literal(" "))
+                .append(Component.literal(value).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x55AAFF))));
+    }
+
+    private static String formatSeconds(int ticks) {
+        double seconds = ticks / 20.0D;
+        if (seconds == Math.floor(seconds)) {
+            return (int) seconds + "s";
+        }
+        return String.format(java.util.Locale.ROOT, "%.1fs", seconds);
     }
 
 }
