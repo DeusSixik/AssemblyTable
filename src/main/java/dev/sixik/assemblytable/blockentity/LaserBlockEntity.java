@@ -2,20 +2,26 @@ package dev.sixik.assemblytable.blockentity;
 
 import dev.sixik.assemblytable.api.energy.LaserTarget;
 import dev.sixik.assemblytable.api.laser.LaserConfig;
+import dev.sixik.assemblytable.block.LaserBlock;
 import dev.sixik.assemblytable.register.ATMRegistry;
 import dev.sixik.assemblytable.utils.energy.MutableEnergyStorage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -84,7 +90,7 @@ public class LaserBlockEntity extends BlockEntity {
         BlockPos previousTarget = targetPos;
         int previousBeamColorStage = getBeamColorStage();
 
-        if (targetPos != null && !isPowerNeededAt(targetPos)) {
+        if (targetPos != null && (!isPowerNeededAt(targetPos) || !isTargetVisible(targetPos))) {
             targetPos = null;
         }
 
@@ -177,12 +183,24 @@ public class LaserBlockEntity extends BlockEntity {
 
         List<BlockPos> validTargets = new ArrayList<>();
 
-        BlockPos start = this.worldPosition.offset(-targetRange, -targetRange, -targetRange);
-        BlockPos end = this.worldPosition.offset(targetRange, targetRange, targetRange);
+        Direction facing = getBlockState().getValue(LaserBlock.FACING);
+        Direction axisA = getPerpendicularAxisA(facing);
+        Direction axisB = getPerpendicularAxisB(facing);
 
-        for (BlockPos p : BlockPos.betweenClosed(start, end)) {
-            if (isPowerNeededAt(p)) {
-                validTargets.add(p.immutable());
+        for (int depth = 1; depth <= targetRange; depth++) {
+            int radius = depth - 1;
+
+            for (int offsetA = -radius; offsetA <= radius; offsetA++) {
+                for (int offsetB = -radius; offsetB <= radius; offsetB++) {
+                    BlockPos p = this.worldPosition
+                            .relative(facing, depth)
+                            .relative(axisA, offsetA)
+                            .relative(axisB, offsetB);
+
+                    if (isPowerNeededAt(p) && isTargetVisible(p)) {
+                        validTargets.add(p.immutable());
+                    }
+                }
             }
         }
 
@@ -200,6 +218,41 @@ public class LaserBlockEntity extends BlockEntity {
             return !target.isInvalidTarget() && target.getRequiredLaserPower() > 0;
         }
         return false;
+    }
+
+    private boolean isTargetVisible(BlockPos targetPos) {
+        if (level == null) return false;
+
+        Vec3 start = getBeamStart();
+        Vec3 end = Vec3.atCenterOf(targetPos);
+        BlockHitResult hitResult = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+
+        return hitResult.getType() == HitResult.Type.MISS || hitResult.getBlockPos().equals(targetPos);
+    }
+
+    private Vec3 getBeamStart() {
+        Direction facing = getBlockState().getValue(LaserBlock.FACING);
+        return Vec3.atCenterOf(this.worldPosition).add(
+                facing.getStepX() * 0.5D,
+                facing.getStepY() * 0.5D,
+                facing.getStepZ() * 0.5D
+        );
+    }
+
+    private static Direction getPerpendicularAxisA(Direction facing) {
+        return switch (facing.getAxis()) {
+            case X -> Direction.UP;
+            case Y -> Direction.EAST;
+            case Z -> Direction.EAST;
+        };
+    }
+
+    private static Direction getPerpendicularAxisB(Direction facing) {
+        return switch (facing.getAxis()) {
+            case X -> Direction.SOUTH;
+            case Y -> Direction.SOUTH;
+            case Z -> Direction.UP;
+        };
     }
 
     public BlockPos getTargetPos() {
