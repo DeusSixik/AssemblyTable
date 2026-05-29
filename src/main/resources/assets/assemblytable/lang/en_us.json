@@ -10,7 +10,7 @@
   "item.assemblytable.redstone_chipset_diamond": "Diamond Chipset",
   "item.assemblytable.redstone_chipset_quartz": "Quartz Chipset",
   "itemGroup.assemblytable.main": "AssemblyTable",
-  "tooltip.assemblytable.hold_shift": "Hold Shift for laser stats",
+  "tooltip.assemblytable.hold_shift": "§7Hold §6Shift§7 for laser stats",
   "tooltip.assemblytable.laser.capacity": "Capacity",
   "tooltip.assemblytable.laser.warmup_time": "Warmup Time",
   "tooltip.assemblytable.laser.output": "Output"

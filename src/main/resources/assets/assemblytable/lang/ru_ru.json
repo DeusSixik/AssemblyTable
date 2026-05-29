@@ -1,0 +1,17 @@
+{
+  "block.assemblytable.assembly_table": "Сборочный стол",
+  "block.assemblytable.powered_assembly_table": "Энергетический Сборочный стол",
+  "block.assemblytable.laser_basic": "Лазер",
+  "block.assemblytable.laser_basic_warmup": "Лазер (Разогревающийся)",
+  "be.assembly_tableBlock.name": "Сборочный стол",
+  "item.assemblytable.redstone_chipset_red": "Микросхема из редстоуна",
+  "item.assemblytable.redstone_chipset_iron": "Железная микросхема",
+  "item.assemblytable.redstone_chipset_gold": "Золотая микросхема",
+  "item.assemblytable.redstone_chipset_diamond": "Алмазная микросхема",
+  "item.assemblytable.redstone_chipset_quartz": "Кварцевая микросхема",
+  "itemGroup.assemblytable.main": "AssemblyTable",
+  "tooltip.assemblytable.hold_shift": "§7Удерживайте нажатой клавишу §6Shift§7 для получения статистики лазера",
+  "tooltip.assemblytable.laser.capacity": "Вместимость",
+  "tooltip.assemblytable.laser.warmup_time": "Время прогрева",
+  "tooltip.assemblytable.laser.output": "Выход"
+}
