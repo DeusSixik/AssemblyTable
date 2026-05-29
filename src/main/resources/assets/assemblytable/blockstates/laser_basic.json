@@ -1,0 +1,30 @@
+{
+    "variants": {
+        "facing=up": {
+            "model": "assemblytable:block/laser"
+        },
+        "facing=down": {
+            "model": "assemblytable:block/laser",
+            "x": 180
+        },
+        "facing=north": {
+            "model": "assemblytable:block/laser",
+            "x": 90
+        },
+        "facing=east": {
+            "model": "assemblytable:block/laser",
+            "x": 90,
+            "y": 90
+        },
+        "facing=south": {
+            "model": "assemblytable:block/laser",
+            "x": 90,
+            "y": 180
+        },
+        "facing=west": {
+            "model": "assemblytable:block/laser",
+            "x": 90,
+            "y": 270
+        }
+    }
+}

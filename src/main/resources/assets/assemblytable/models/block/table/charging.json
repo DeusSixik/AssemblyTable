@@ -1,0 +1,85 @@
+{
+    "render_type": "minecraft:cutout",
+    "parent": "block/block",
+    "elements": [
+        {
+            "from": [0, 0, 0],
+            "to": [4, 6, 4],
+            "faces": {
+                "down": {"texture": "#bottom"},
+                "up": {"texture": "#bottom"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        },
+        {
+            "from": [12, 0, 0],
+            "to": [16, 6, 4],
+            "faces": {
+                "down": {"texture": "#bottom"},
+                "up": {"texture": "#bottom"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        },
+        {
+            "from": [0, 0, 12],
+            "to": [4, 6, 16],
+            "faces": {
+                "down": {"texture": "#bottom"},
+                "up": {"texture": "#bottom"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        },
+        {
+            "from": [12, 0, 12],
+            "to": [16, 6, 16],
+            "faces": {
+                "down": {"texture": "#bottom"},
+                "up": {"texture": "#bottom"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        },
+        {
+            "from": [4, 0, 4],
+            "to": [12, 6, 12],
+            "faces": {
+                "down": {"texture": "#bottom"},
+                "up": {"texture": "#bottom"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        },
+        {
+            "from": [0, 6, 0],
+            "to": [16, 9, 16],
+            "faces": {
+                "down": {"texture": "#middle"},
+                "up": {"texture": "#top"},
+                "north": {"texture": "#side"},
+                "south": {"texture": "#side"},
+                "west": {"texture": "#side"},
+                "east": {"texture": "#side"}
+            }
+        }
+    ],
+    "textures": {
+        "particle": "assemblytable:block/table/charging/top",
+        "top": "assemblytable:block/table/charging/top",
+        "middle": "assemblytable:block/table/charging/middle",
+        "bottom": "assemblytable:block/table/charging/bottom",
+        "side": "assemblytable:block/table/charging/side"
+    }
+}

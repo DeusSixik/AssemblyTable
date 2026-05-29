@@ -1,0 +1,21 @@
+{
+  "type": "assemblytable:assembly_table",
+  "result": {
+    "id": "minecraft:diamond",
+    "count": 1
+  },
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      },
+      "count": 20
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:gold_ingot"
+      }
+    }
+  ],
+  "energy": 10000000
+}

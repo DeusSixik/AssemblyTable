@@ -1,0 +1,8 @@
+{
+    "parent": "assemblytable:block/laser_table",
+    "textures": {
+        "top": "assemblytable:block/integration_table_top",
+        "side": "assemblytable:block/integration_table_side",
+        "bottom": "assemblytable:block/integration_table_bottom"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "assemblytable:item/gatecopier/full"
+    }
+}

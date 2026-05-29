@@ -1,0 +1,8 @@
+{
+    "parent": "assemblytable:block/laser_table",
+    "textures": {
+        "top": "assemblytable:block/charging_table_top",
+        "side": "assemblytable:block/charging_table_side",
+        "bottom": "assemblytable:block/charging_table_bottom"
+    }
+}

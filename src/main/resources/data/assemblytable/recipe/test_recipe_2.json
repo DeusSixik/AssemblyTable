@@ -1,0 +1,21 @@
+{
+  "type": "assemblytable:assembly_table",
+  "result": {
+    "id": "minecraft:bedrock",
+    "count": 1
+  },
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:diamond"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:gold_ingot"
+      }
+    }
+  ],
+  "energy": 5000
+}
