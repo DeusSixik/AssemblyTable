@@ -1,5 +1,7 @@
 package dev.sixik.assemblytable.recipes;
 
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
+import com.blamejared.crafttweaker_annotations.annotations.Document;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.sixik.assemblytable.utils.SizedIngredient;
@@ -10,9 +12,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.openzen.zencode.java.ZenCodeType;
 
 import java.util.List;
 
+@ZenRegister
+@ZenCodeType.Name("assemblytable.api.recipe.AssemblyTableRecipe")
+//@Document("mods/assemblytable/recipe/AssemblyTableRecipe")
 public class AssemblyTableRecipe implements Recipe<RecipeWrapper> {
 
     private final ItemStack result;
@@ -25,10 +31,12 @@ public class AssemblyTableRecipe implements Recipe<RecipeWrapper> {
         this.energyRequired = energyRequired;
     }
 
+    @ZenCodeType.Method
     public List<SizedIngredient> getIngredientsSizable() {
         return ingredients;
     }
 
+    @ZenCodeType.Method
     public int getEnergyRequired() {
         return energyRequired;
     }

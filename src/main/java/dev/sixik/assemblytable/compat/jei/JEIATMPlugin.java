@@ -36,9 +36,8 @@ public class JEIATMPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        List<AssemblyTableRecipe> polishingRecipes =
-                recipeManager.getAllRecipesFor(ATMRecipes.ASSEMBLY_TABLE_TYPE.get())
-                        .stream().map(RecipeHolder::value).toList();
+        List<RecipeHolder<AssemblyTableRecipe>> polishingRecipes =
+                recipeManager.getAllRecipesFor(ATMRecipes.ASSEMBLY_TABLE_TYPE.get());
 
         registration.addRecipes(CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE, polishingRecipes);
     }

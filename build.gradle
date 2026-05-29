@@ -171,3 +171,7 @@ idea {
         downloadJavadoc = true
     }
 }
+
+//compileJava {
+//    options.compilerArgs << "-Acrafttweaker.processor.document.output_directory=${file(mod_id.toLowerCase())}"
+//}
