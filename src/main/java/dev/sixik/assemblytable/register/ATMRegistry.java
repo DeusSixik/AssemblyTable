@@ -18,6 +18,7 @@ import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -51,6 +52,13 @@ public class ATMRegistry {
     public static DeferredBlock<Block> LASER_BASIC_WARMUP;
     public static Supplier<BlockEntityType<LaserBlockEntity>> LASER_TYPE;
     private static final List<DeferredBlock<? extends Block>> LASER_BLOCKS = new ArrayList<>();
+    private static final List<DeferredHolder<Item, ? extends Item>> REDSTONE_CHIPSETS = new ArrayList<>();
+
+    public static DeferredHolder<Item, Item> REDSTONE_CHIPSET_RED;
+    public static DeferredHolder<Item, Item> REDSTONE_CHIPSET_IRON;
+    public static DeferredHolder<Item, Item> REDSTONE_CHIPSET_GOLD;
+    public static DeferredHolder<Item, Item> REDSTONE_CHIPSET_DIAMOND;
+    public static DeferredHolder<Item, Item> REDSTONE_CHIPSET_QUARTZ;
 
 
     public static DeferredHolder<MenuType<?>, MenuType<AssemblyTableMenu>> ASSEMBLY_TABLE_MENU;
@@ -103,6 +111,12 @@ public class ATMRegistry {
                         LASER_BASIC.get(),
                         LASER_BASIC_WARMUP.get()).build(Util.fetchChoiceType(References.BLOCK_ENTITY, "laser_be")));
 
+        REDSTONE_CHIPSET_RED = registerChipsetItem("redstone_chipset_red");
+        REDSTONE_CHIPSET_IRON = registerChipsetItem("redstone_chipset_iron");
+        REDSTONE_CHIPSET_GOLD = registerChipsetItem("redstone_chipset_gold");
+        REDSTONE_CHIPSET_DIAMOND = registerChipsetItem("redstone_chipset_diamond");
+        REDSTONE_CHIPSET_QUARTZ = registerChipsetItem("redstone_chipset_quartz");
+
 
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
@@ -114,6 +128,10 @@ public class ATMRegistry {
 
     public static List<DeferredBlock<? extends Block>> getLaserBlocks() {
         return List.copyOf(LASER_BLOCKS);
+    }
+
+    public static List<DeferredHolder<Item, ? extends Item>> getRedstoneChipsets() {
+        return List.copyOf(REDSTONE_CHIPSETS);
     }
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
@@ -130,6 +148,12 @@ public class ATMRegistry {
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
         ITEMS.registerItem(name, (properties) -> new BlockItem(block.get(), properties));
+    }
+
+    private static DeferredHolder<Item, Item> registerChipsetItem(String name) {
+        DeferredHolder<Item, Item> item = ITEMS.registerItem(name, Item::new);
+        REDSTONE_CHIPSETS.add(item);
+        return item;
     }
 
     private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(String name,

@@ -47,6 +47,10 @@ public class ATM {
                         for (var laserBlock : ATMRegistry.getLaserBlocks()) {
                             output.accept(laserBlock.get());
                         }
+
+                        for (var chipset : ATMRegistry.getRedstoneChipsets()) {
+                            output.accept(chipset.get());
+                        }
                     })
                     .build());
 

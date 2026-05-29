@@ -1,7 +1,7 @@
 {
   "type": "assemblytable:assembly_table",
   "result": {
-    "id": "minecraft:diamond",
+    "id": "assemblytable:redstone_chipset_red",
     "count": 1
   },
   "ingredients": [
@@ -9,13 +9,8 @@
       "ingredient": {
         "item": "minecraft:redstone"
       },
-      "count": 20
-    },
-    {
-      "ingredient": {
-        "item": "minecraft:gold_ingot"
-      }
+      "count": 1
     }
   ],
-  "energy": 10000000
+  "energy": 10000
 }

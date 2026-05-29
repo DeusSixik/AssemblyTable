@@ -1,0 +1,22 @@
+{
+  "type": "assemblytable:assembly_table",
+  "result": {
+    "id": "assemblytable:redstone_chipset_iron",
+    "count": 1
+  },
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:iron_ingot"
+      },
+      "count": 1
+    }
+  ],
+  "energy": 20000
+}

@@ -1,21 +1,22 @@
 {
   "type": "assemblytable:assembly_table",
   "result": {
-    "id": "minecraft:bedrock",
+    "id": "assemblytable:redstone_chipset_quartz",
     "count": 1
   },
   "ingredients": [
     {
       "ingredient": {
-        "item": "minecraft:diamond"
+        "item": "minecraft:redstone"
       },
       "count": 1
     },
     {
       "ingredient": {
-        "item": "minecraft:gold_ingot"
-      }
+        "item": "minecraft:quartz"
+      },
+      "count": 1
     }
   ],
-  "energy": 5000
+  "energy": 60000
 }
