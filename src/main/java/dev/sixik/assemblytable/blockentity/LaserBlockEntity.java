@@ -1,6 +1,7 @@
 package dev.sixik.assemblytable.blockentity;
 
 import dev.sixik.assemblytable.api.energy.LaserTarget;
+import dev.sixik.assemblytable.api.laser.LaserConfig;
 import dev.sixik.assemblytable.register.ATMRegistry;
 import dev.sixik.assemblytable.utils.energy.MutableEnergyStorage;
 import net.minecraft.core.BlockPos;
@@ -14,39 +15,39 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.energy.EnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LaserBlockEntity extends BlockEntity {
-    
+
     public final MutableEnergyStorage energy;
-    
     public final int maxTransferPerTick;
     public final int targetRange;
+    public final LaserConfig laserConfig;
 
     private BlockPos targetPos = null;
     public Vec3 laserRenderOffset = null;
 
     private int scanTimer = 0;
     private int clientJitterTimer = 0;
+    private int warmupTicks = 0;
+    private int syncedBeamColorStage = 0;
 
     public LaserBlockEntity(BlockPos pos, BlockState blockState) {
-        this(pos, blockState, 6, 1000, 1);
+        this(pos, blockState, LaserConfig.builder().build());
     }
-    
-    public LaserBlockEntity(BlockPos pos, BlockState blockState, int targetRange, int maxTransferPerTick, int energyCap) {
+
+    public LaserBlockEntity(BlockPos pos, BlockState blockState, LaserConfig laserConfig) {
         super(ATMRegistry.LASER_TYPE.get(), pos, blockState);
-        
-        this.targetRange = targetRange;
-        this.maxTransferPerTick = maxTransferPerTick;
 
-        this.energy = new MutableEnergyStorage(energyCap, 5000, maxTransferPerTick) {
+        this.laserConfig = laserConfig;
+        this.targetRange = laserConfig.targetRange();
+        this.maxTransferPerTick = laserConfig.maxTransferPerTick();
 
+        this.energy = new MutableEnergyStorage(laserConfig.energyBuffer(), laserConfig.maxReceivePerTick(), maxTransferPerTick) {
             @Override
             public int receiveEnergy(int toReceive, boolean simulate) {
                 int value = super.receiveEnergy(toReceive, simulate);
@@ -81,6 +82,7 @@ public class LaserBlockEntity extends BlockEntity {
         }
 
         BlockPos previousTarget = targetPos;
+        int previousBeamColorStage = getBeamColorStage();
 
         if (targetPos != null && !isPowerNeededAt(targetPos)) {
             targetPos = null;
@@ -97,22 +99,72 @@ public class LaserBlockEntity extends BlockEntity {
         if (targetPos != null && this.energy.getEnergyStored() > 0) {
             BlockEntity be = level.getBlockEntity(targetPos);
             if (be instanceof LaserTarget target) {
-
-                int extractable = this.energy.extractEnergy(maxTransferPerTick, true);
-                int toSend = Math.min(extractable, target.getRequiredLaserPower());
+                int available = this.energy.extractEnergy(maxTransferPerTick, true);
+                int toSend = Math.min(available, target.getRequiredLaserPower());
 
                 if (toSend > 0) {
-                    int excess = target.receiveLaserPower(toSend);
-                    int actuallySent = toSend - excess;
+                    int actualToSend = getDeliveredEnergy(toSend);
+                    if (actualToSend > 0) {
+                        int excess = target.receiveLaserPower(actualToSend);
+                        int actuallySent = actualToSend - excess;
 
-                    this.energy.extractEnergy(actuallySent, false);
+                        this.energy.extractEnergy(actuallySent, false);
+                        updateWarmupTicks(actuallySent);
+                    }
+                } else {
+                    updateWarmupTicks(0);
                 }
             }
+        } else {
+            updateWarmupTicks(0);
         }
 
-        if (targetPos != previousTarget) {
+        int currentBeamColorStage = getBeamColorStage();
+        if (currentBeamColorStage != previousBeamColorStage) {
+            syncedBeamColorStage = currentBeamColorStage;
+        }
+
+        if (targetPos != previousTarget || currentBeamColorStage != previousBeamColorStage) {
             setChanged();
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private int getDeliveredEnergy(int requested) {
+        if (!laserConfig.hasWarmup()) {
+            return Math.min(requested, maxTransferPerTick);
+        }
+
+        int warmupLimit = getWarmupLimit();
+        return Math.min(requested, Math.min(maxTransferPerTick, warmupLimit));
+    }
+
+    private int getWarmupLimit() {
+        if (!laserConfig.hasWarmup()) {
+            return maxTransferPerTick;
+        }
+
+        int warmupDuration = laserConfig.warmup().ticks();
+        if (warmupDuration <= 0) {
+            return maxTransferPerTick;
+        }
+
+        float progress = Math.min(1.0f, (float) warmupTicks / warmupDuration);
+        float eased = progress * progress;
+        int baseLimit = Math.max(1, maxTransferPerTick);
+        return Math.max(1, Math.round(baseLimit * eased));
+    }
+
+    private void updateWarmupTicks(int actuallySent) {
+        if (!laserConfig.hasWarmup()) {
+            warmupTicks = 0;
+            return;
+        }
+
+        if (actuallySent > 0) {
+            warmupTicks = Math.min(laserConfig.warmup().ticks(), warmupTicks + 1);
+        } else {
+            warmupTicks = Math.max(0, warmupTicks - 1);
         }
     }
 
@@ -125,18 +177,16 @@ public class LaserBlockEntity extends BlockEntity {
 
         List<BlockPos> validTargets = new ArrayList<>();
 
-        // Перебираем область вокруг лазера (куб 13x13x13)
         BlockPos start = this.worldPosition.offset(-targetRange, -targetRange, -targetRange);
         BlockPos end = this.worldPosition.offset(targetRange, targetRange, targetRange);
 
         for (BlockPos p : BlockPos.betweenClosed(start, end)) {
             if (isPowerNeededAt(p)) {
-                validTargets.add(p.immutable()); // Обязательно immutable, так как betweenClosed использует mutable
+                validTargets.add(p.immutable());
             }
         }
 
         if (!validTargets.isEmpty()) {
-            // Выбираем случайную цель из доступных
             targetPos = validTargets.get(level.random.nextInt(validTargets.size()));
         } else {
             targetPos = null;
@@ -156,10 +206,49 @@ public class LaserBlockEntity extends BlockEntity {
         return targetPos;
     }
 
+    public Vec3 getBeamColor() {
+        if (!laserConfig.hasWarmup()) {
+            return colorToVec3(laserConfig.beamColor());
+        }
+
+        int stage = level != null && level.isClientSide() ? syncedBeamColorStage : getBeamColorStage();
+        return switch (stage) {
+            case 0 -> colorToVec3(laserConfig.warmup().lowSpeedColor());
+            case 1 -> colorToVec3(laserConfig.warmup().midSpeedColor());
+            default -> colorToVec3(laserConfig.warmup().maxSpeedColor());
+        };
+    }
+
+    private int getBeamColorStage() {
+        if (!laserConfig.hasWarmup()) {
+            return 2;
+        }
+
+        int warmupDuration = laserConfig.warmup().ticks();
+        if (warmupDuration <= 0) {
+            return 2;
+        }
+
+        float progress = Math.min(1.0f, (float) warmupTicks / warmupDuration);
+        if (progress < 0.34f) {
+            return 0;
+        }
+        if (progress < 0.84f) {
+            return 1;
+        }
+        return 2;
+    }
+
+    private Vec3 colorToVec3(dev.sixik.assemblytable.utils.Vec4i color) {
+        return new Vec3(color.x() / 255.0, color.y() / 255.0, color.z() / 255.0);
+    }
+
     @Override
     protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
         super.saveAdditional(nbt, provider);
         nbt.put("energy", energy.serializeNBT(provider));
+        nbt.putInt("warmup_ticks", warmupTicks);
+        nbt.putInt("beam_color_stage", getBeamColorStage());
         if (targetPos != null) {
             nbt.put("target_pos", NbtUtils.writeBlockPos(targetPos));
         }
@@ -171,6 +260,9 @@ public class LaserBlockEntity extends BlockEntity {
         if (nbt.contains("energy")) {
             energy.deserializeNBT(provider, nbt.get("energy"));
         }
+
+        warmupTicks = nbt.getInt("warmup_ticks");
+        syncedBeamColorStage = nbt.getInt("beam_color_stage");
 
         if (nbt.contains("target_pos")) {
             targetPos = NbtUtils.readBlockPos(nbt, "target_pos").orElse(null);

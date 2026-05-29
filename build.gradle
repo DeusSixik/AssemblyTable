@@ -104,6 +104,9 @@ repositories {
     maven {
         url "https://cursemaven.com"
     }
+    maven {
+        url "https://maven.blamejared.com"
+    }
 }
 
 dependencies {
@@ -112,6 +115,13 @@ dependencies {
 
     runtimeOnly "curse.maven:jade-324717:7545219"
     runtimeOnly "curse.maven:mekanism-268560:7904058"
+
+    def ctDep = "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
+    compileOnly(ctDep)
+    runtimeOnly(ctDep)
+
+    annotationProcessor 'com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors:3.0.0.10'
+    annotationProcessor ctDep
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

@@ -1,6 +1,7 @@
 package dev.sixik.assemblytable.register;
 
 import dev.sixik.assemblytable.ATM;
+import dev.sixik.assemblytable.api.laser.LaserConfig;
 import dev.sixik.assemblytable.block.LaserBlock;
 import dev.sixik.assemblytable.block.LaserTableBlock;
 import dev.sixik.assemblytable.blockentity.AssemblyTableBlockEntity;
@@ -41,6 +42,7 @@ public class ATMRegistry {
     public static Supplier<BlockEntityType<AssemblyTableBlockEntity>> ASSEMBLY_TABLE_TYPE;
 
     public static DeferredBlock<Block> LASER_BASIC;
+    public static DeferredBlock<Block> LASER_BASIC_WARMUP;
     public static Supplier<BlockEntityType<LaserBlockEntity>> LASER_TYPE;
 
 
@@ -57,11 +59,35 @@ public class ATMRegistry {
         ASSEMBLY_TABLE_MENU = registerMenuType("assembly_table_menu", AssemblyTableMenu::new);
 
         LASER_BASIC = registerBlock("laser_basic", (properties) ->
-                new LaserBlock(properties, 6, 1000, 1000, new Vec4i(30, 100, 255, 200))
+                new LaserBlock(properties, LaserConfig.builder()
+                        .targetRange(6)
+                        .energyBuffer(1000)
+                        .maxSpeedTransferPerTick(1000)
+                        .maxReceivePerTick(5000)
+                        .beamColor(new Vec4i(30, 100, 255, 200))
+                        .warmupDisabled()
+                        .build())
         );
+
+        LASER_BASIC_WARMUP = registerBlock("laser_basic_warmup", (properties) ->
+                new LaserBlock(properties, LaserConfig.builder()
+                        .targetRange(6)
+                        .energyBuffer(1000)
+                        .maxSpeedTransferPerTick(1000)
+                        .maxReceivePerTick(5000)
+                        .rampUpTicks(60)
+                        .warmupColors(
+                                new Vec4i(255, 40, 20, 200),
+                                new Vec4i(255, 220, 30, 200),
+                                new Vec4i(30, 100, 255, 200)
+                        )
+                        .build())
+        );
+
         LASER_TYPE = BLOCK_ENTITIES.register("laser_basic_be", () ->
                 BlockEntityType.Builder.of(LaserBlockEntity::new,
-                        LASER_BASIC.get()).build(Util.fetchChoiceType(References.BLOCK_ENTITY, "laser_be")));
+                        LASER_BASIC.get(),
+                        LASER_BASIC_WARMUP.get()).build(Util.fetchChoiceType(References.BLOCK_ENTITY, "laser_be")));
 
 
         ITEMS.register(modEventBus);

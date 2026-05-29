@@ -1,26 +1,32 @@
 package dev.sixik.assemblytable.api.energy;
 
-/** This interface should be defined by any Tile which wants to receive power from BuildCraft lasers.
- * <p>
- * The respective Block MUST implement ILaserTargetBlock! */
+/**
+ * Implemented by block entities that can receive power from AssemblyTable lasers.
+ *
+ * <p>Lasers search for nearby targets implementing this interface and transfer FE
+ * while the target reports that it still needs energy.</p>
+ */
 public interface LaserTarget {
 
     /**
-     * Возвращает количество энергии, которое сейчас требуется цели.
-     * @return Требуемая энергия (в FE), или 0, если энергия не нужна.
+     * Returns how much energy this target can currently accept.
+     *
+     * @return requested energy in FE, or {@code 0} if no laser power is needed right now
      */
     int getRequiredLaserPower();
 
     /**
-     * Передает энергию от лазера к цели.
-     * @param energy Количество FE для передачи.
-     * @return Излишек энергии (excess). Если цель приняла всё, вернет 0.
+     * Tries to receive energy from a laser.
+     *
+     * @param energy amount of FE offered by the laser
+     * @return leftover FE that could not be accepted; return {@code 0} when all energy was consumed
      */
     int receiveLaserPower(int energy);
 
     /**
-     * Возвращает true, если BlockEntity больше не является валидной целью
-     * (например, если блок сломали).
+     * Returns whether this target should be ignored by lasers.
+     *
+     * @return {@code true} when the target is no longer valid, for example after removal
      */
     boolean isInvalidTarget();
 }

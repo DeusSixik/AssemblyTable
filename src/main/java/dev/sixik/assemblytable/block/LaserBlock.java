@@ -3,6 +3,7 @@ package dev.sixik.assemblytable.block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.sixik.assemblytable.api.laser.LaserConfig;
 import dev.sixik.assemblytable.blockentity.LaserBlockEntity;
 import dev.sixik.assemblytable.register.ATMRegistry;
 import dev.sixik.assemblytable.utils.Vec4i;
@@ -53,17 +54,32 @@ public class LaserBlock extends BaseEntityBlock {
     public final int colorGreen;
     public final int colorBlue;
     public final int colorAlpha;
+    public final LaserConfig laserConfig;
 
     public LaserBlock(Properties p_49795_, int targetRange, int maxTransferPerTick, int energyCap, Vec4i beamColor) {
+        this(p_49795_, LaserConfig.builder()
+                .targetRange(targetRange)
+                .maxTransferPerTick(maxTransferPerTick)
+                .energyBuffer(energyCap)
+                .beamColor(beamColor)
+                .warmupDisabled()
+                .build());
+    }
+
+    public LaserBlock(Properties p_49795_, LaserConfig laserConfig) {
         super(p_49795_.noOcclusion());
+        if (laserConfig == null) {
+            throw new IllegalArgumentException("laserConfig cannot be null");
+        }
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
-        this.targetRange = targetRange;
-        this.maxTransferPerTick = maxTransferPerTick;
-        this.energyCap = energyCap;
-        this.colorRed = beamColor.x();
-        this.colorGreen = beamColor.y();
-        this.colorBlue = beamColor.z();
-        this.colorAlpha = beamColor.w();
+        this.laserConfig = laserConfig;
+        this.targetRange = laserConfig.targetRange();
+        this.maxTransferPerTick = laserConfig.maxTransferPerTick();
+        this.energyCap = laserConfig.energyBuffer();
+        this.colorRed = laserConfig.beamColor().x();
+        this.colorGreen = laserConfig.beamColor().y();
+        this.colorBlue = laserConfig.beamColor().z();
+        this.colorAlpha = laserConfig.beamColor().w();
     }
 
     @Override
@@ -114,7 +130,7 @@ public class LaserBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new LaserBlockEntity(blockPos, blockState, targetRange, maxTransferPerTick, energyCap);
+        return new LaserBlockEntity(blockPos, blockState, laserConfig);
     }
 
     @Override

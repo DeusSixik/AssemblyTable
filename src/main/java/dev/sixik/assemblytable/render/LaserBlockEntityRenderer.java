@@ -27,6 +27,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
 
         Direction facing = entity.getBlockState().getValue(LaserBlock.FACING);
         LaserBlock laserBlock = (LaserBlock) entity.getBlockState().getBlock();
+        Vec3 beamColor = entity.getBeamColor();
 
         double startX = 0.5 + facing.getStepX() * 0.25;
         double startY = 0.5 + facing.getStepY() * 0.25;
@@ -60,7 +61,17 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
         float vOffset = (time + partialTicks) * -0.05F;
         float width = 0.03125f;
 
-        renderBeam(poseStack, consumer, width, distance, vOffset, laserBlock.colorRed, laserBlock.colorGreen, laserBlock.colorBlue, laserBlock.colorAlpha);
+        renderBeam(
+                poseStack,
+                consumer,
+                width,
+                distance,
+                vOffset,
+                (int) Math.round(beamColor.x * 255.0),
+                (int) Math.round(beamColor.y * 255.0),
+                (int) Math.round(beamColor.z * 255.0),
+                laserBlock.colorAlpha
+        );
 
         poseStack.popPose();
     }
