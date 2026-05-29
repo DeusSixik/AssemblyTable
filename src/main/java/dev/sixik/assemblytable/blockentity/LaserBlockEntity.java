@@ -89,6 +89,7 @@ public class LaserBlockEntity extends BlockEntity {
 
         BlockPos previousTarget = targetPos;
         int previousBeamColorStage = getBeamColorStage();
+        boolean previousHasEnergy = this.energy.getEnergyStored() > 0;
 
         if (targetPos != null && (!isPowerNeededAt(targetPos) || !isTargetVisible(targetPos))) {
             targetPos = null;
@@ -126,11 +127,14 @@ public class LaserBlockEntity extends BlockEntity {
         }
 
         int currentBeamColorStage = getBeamColorStage();
+        boolean currentHasEnergy = this.energy.getEnergyStored() > 0;
         if (currentBeamColorStage != previousBeamColorStage) {
             syncedBeamColorStage = currentBeamColorStage;
         }
 
-        if (targetPos != previousTarget || currentBeamColorStage != previousBeamColorStage) {
+        if (targetPos != previousTarget
+                || currentBeamColorStage != previousBeamColorStage
+                || currentHasEnergy != previousHasEnergy) {
             setChanged();
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
         }
