@@ -90,7 +90,11 @@ public class AssemblyTableBlockEntity extends BlockEntity
 
 
     public AssemblyTableBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ATMRegistry.ASSEMBLY_TABLE_TYPE.get(), pos, blockState);
+        this(ATMRegistry.ASSEMBLY_TABLE_TYPE.get(), pos, blockState);
+    }
+
+    protected AssemblyTableBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+        super(type, pos, blockState);
     }
 
     @Override
@@ -406,5 +410,9 @@ public class AssemblyTableBlockEntity extends BlockEntity
     @Override
     public boolean isInvalidTarget() {
         return this.isRemoved();
+    }
+
+    public boolean supportsDirectFeInput() {
+        return false;
     }
 }

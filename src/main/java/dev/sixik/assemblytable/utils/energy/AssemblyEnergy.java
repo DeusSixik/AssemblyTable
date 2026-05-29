@@ -35,7 +35,7 @@ public class AssemblyEnergy extends EnergyStorage {
 
     @Override
     public boolean canReceive() {
-        return false;
+        return tableBlock.supportsDirectFeInput();
     }
 
     public int receiveLaserEnergy(int maxReceive, boolean simulate) {
@@ -52,6 +52,14 @@ public class AssemblyEnergy extends EnergyStorage {
             }
         }
         return energyReceived;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if (!tableBlock.supportsDirectFeInput()) {
+            return 0;
+        }
+        return receiveLaserEnergy(maxReceive, simulate);
     }
 
     public void consumeEnergy(int amount) {

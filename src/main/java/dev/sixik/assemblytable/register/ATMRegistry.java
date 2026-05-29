@@ -4,8 +4,10 @@ import dev.sixik.assemblytable.ATM;
 import dev.sixik.assemblytable.api.laser.LaserConfig;
 import dev.sixik.assemblytable.block.LaserBlock;
 import dev.sixik.assemblytable.block.LaserTableBlock;
+import dev.sixik.assemblytable.block.PoweredAssemblyTableBlock;
 import dev.sixik.assemblytable.blockentity.AssemblyTableBlockEntity;
 import dev.sixik.assemblytable.blockentity.LaserBlockEntity;
+import dev.sixik.assemblytable.blockentity.PoweredAssemblyTableBlockEntity;
 import dev.sixik.assemblytable.recipes.ATMRecipes;
 import dev.sixik.assemblytable.screens.assembly_table.AssemblyTableMenu;
 import dev.sixik.assemblytable.utils.Vec4i;
@@ -41,7 +43,9 @@ public class ATMRegistry {
             DeferredRegister.create(Registries.MENU, ATM.MODID);
 
     public static DeferredBlock<Block> ASSEMBLY_TABLE;
+    public static DeferredBlock<Block> POWERED_ASSEMBLY_TABLE;
     public static Supplier<BlockEntityType<AssemblyTableBlockEntity>> ASSEMBLY_TABLE_TYPE;
+    public static Supplier<BlockEntityType<PoweredAssemblyTableBlockEntity>> POWERED_ASSEMBLY_TABLE_TYPE;
 
     public static DeferredBlock<Block> LASER_BASIC;
     public static DeferredBlock<Block> LASER_BASIC_WARMUP;
@@ -58,6 +62,13 @@ public class ATMRegistry {
         ASSEMBLY_TABLE_TYPE = BLOCK_ENTITIES.register("assembly_table_be", () ->
                 BlockEntityType.Builder.of(AssemblyTableBlockEntity::new,
                         ASSEMBLY_TABLE.get()).build(Util.fetchChoiceType(References.BLOCK_ENTITY, "assembly_table_be")));
+
+        POWERED_ASSEMBLY_TABLE = registerBlock("powered_assembly_table", (properties) ->
+                new PoweredAssemblyTableBlock(LaserTableBlock.Type.ASSEMBLY_TABLE, properties));
+
+        POWERED_ASSEMBLY_TABLE_TYPE = BLOCK_ENTITIES.register("powered_assembly_table_be", () ->
+                BlockEntityType.Builder.of(PoweredAssemblyTableBlockEntity::new,
+                        POWERED_ASSEMBLY_TABLE.get()).build(Util.fetchChoiceType(References.BLOCK_ENTITY, "powered_assembly_table_be")));
 
         ASSEMBLY_TABLE_MENU = registerMenuType("assembly_table_menu", AssemblyTableMenu::new);
 

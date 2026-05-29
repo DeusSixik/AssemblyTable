@@ -46,6 +46,7 @@ public class JEIATMPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ATMRegistry.ASSEMBLY_TABLE.get()), CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ATMRegistry.POWERED_ASSEMBLY_TABLE.get()), CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE);
 
         for (var laserBlock : ATMRegistry.getLaserBlocks()) {
             registration.addRecipeCatalyst(new ItemStack(laserBlock.get()), CategoryAssemblyTable.ASSEMBLY_TABLE_TYPE);

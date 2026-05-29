@@ -1,5 +1,6 @@
 {
   "block.assemblytable.assembly_table": "Assembly Table",
+  "block.assemblytable.powered_assembly_table": "Powered Assembly Table",
   "block.assemblytable.laser_basic": "Laser",
   "block.assemblytable.laser_basic_warmup": "Laser (Warmup)",
   "be.assembly_tableBlock.name": "Assembly Table",

@@ -42,9 +42,10 @@ public class ATM {
                     .icon(() -> new ItemStack(ATMRegistry.ASSEMBLY_TABLE.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ATMRegistry.ASSEMBLY_TABLE.get());
-                        output.accept(ATMRegistry.LASER_BASIC.get());
-                        if (ATMRegistry.LASER_BASIC_WARMUP != null) {
-                            output.accept(ATMRegistry.LASER_BASIC_WARMUP.get());
+                        output.accept(ATMRegistry.POWERED_ASSEMBLY_TABLE.get());
+
+                        for (var laserBlock : ATMRegistry.getLaserBlocks()) {
+                            output.accept(laserBlock.get());
                         }
                     })
                     .build());

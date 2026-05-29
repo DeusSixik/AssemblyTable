@@ -1,5 +1,6 @@
 package dev.sixik.assemblytable.screens.assembly_table;
 
+import dev.sixik.assemblytable.block.LaserTableBlock;
 import dev.sixik.assemblytable.blockentity.AssemblyTableBlockEntity;
 import dev.sixik.assemblytable.recipes.AssemblyTableRecipe;
 import dev.sixik.assemblytable.register.ATMRegistry;
@@ -82,8 +83,8 @@ public class AssemblyTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()),
-                player, ATMRegistry.ASSEMBLY_TABLE.get());
+        final var access = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
+        return access.evaluate((p_339522_, p_339523_) -> p_339522_.getBlockState(p_339523_).getBlock() instanceof LaserTableBlock && player.canInteractWithBlock(p_339523_, 4.0F), true);
     }
 
     private void createInventorySlots(Inventory p_267325_, int startY) {

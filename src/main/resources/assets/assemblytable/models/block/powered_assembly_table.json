@@ -1,0 +1,9 @@
+{
+  "render_type": "minecraft:cutout",
+  "parent": "assemblytable:block/laser_table",
+  "textures": {
+    "top": "assemblytable:block/assembly_table_top",
+    "side": "assemblytable:block/assembly_table_side",
+    "bottom": "assemblytable:block/assembly_table_bottom"
+  }
+}

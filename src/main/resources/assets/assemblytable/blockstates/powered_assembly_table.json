@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "assemblytable:block/table/assembly"
+    }
+  }
+}

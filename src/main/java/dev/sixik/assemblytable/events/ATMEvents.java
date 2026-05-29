@@ -47,8 +47,24 @@ public class ATMEvents {
         );
 
         event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ATMRegistry.POWERED_ASSEMBLY_TABLE_TYPE.get(),
+                (blockEntity, side) -> {
+                    return blockEntity.inventory;
+                }
+        );
+
+        event.registerBlockEntity(
                 Capabilities.EnergyStorage.BLOCK,
                 ATMRegistry.ASSEMBLY_TABLE_TYPE.get(),
+                (blockEntity, side) -> {
+                    return blockEntity.energy;
+                }
+        );
+
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                ATMRegistry.POWERED_ASSEMBLY_TABLE_TYPE.get(),
                 (blockEntity, side) -> {
                     return blockEntity.energy;
                 }
