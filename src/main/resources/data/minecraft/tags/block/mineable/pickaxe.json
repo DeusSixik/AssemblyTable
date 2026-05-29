@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "assemblytable:assembly_table",
+    "assemblytable:powered_assembly_table",
+    "assemblytable:laser_basic",
+    "assemblytable:laser_basic_warmup"
+  ]
+}

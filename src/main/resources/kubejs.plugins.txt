@@ -1,0 +1,1 @@
+dev.sixik.assemblytable.compat.kubejs.ATMKubeJs

@@ -135,9 +135,15 @@ public class ATMRegistry {
     }
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
-        DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);
+        DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function, machineBlockProperties());
         registerBlockItem(name, toReturn);
         return toReturn;
+    }
+
+    private static BlockBehaviour.Properties machineBlockProperties() {
+        return BlockBehaviour.Properties.of()
+                .strength(3.5F, 6.0F)
+                .requiresCorrectToolForDrops();
     }
 
     private static <T extends Block> DeferredBlock<T> registerLaserBlock(String name, Function<BlockBehaviour.Properties, T> function) {
