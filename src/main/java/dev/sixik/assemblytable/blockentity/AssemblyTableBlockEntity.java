@@ -108,6 +108,7 @@ public class AssemblyTableBlockEntity extends BlockEntity
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if (level.isClientSide()) return;
+        if (isCraftingBlockedByRedstone()) return;
 
         if (currentActiveRecipe != null && recipeStates.get(currentActiveRecipe.id()) == AssemblyRecipeState.ACTIVE) {
             int energyRequired = currentActiveRecipe.value().getEnergyRequired();
@@ -398,11 +399,17 @@ public class AssemblyTableBlockEntity extends BlockEntity
 
     @Override
     public int getRequiredLaserPower() {
+        if (isCraftingBlockedByRedstone()) {
+            return 0;
+        }
         return this.energy.getMaxEnergyStored() - this.energy.getEnergyStored();
     }
 
     @Override
     public int receiveLaserPower(int energyToReceive) {
+        if (isCraftingBlockedByRedstone()) {
+            return energyToReceive;
+        }
         int received = this.energy.receiveLaserEnergy(energyToReceive, false);
         return energyToReceive - received;
     }
@@ -414,5 +421,9 @@ public class AssemblyTableBlockEntity extends BlockEntity
 
     public boolean supportsDirectFeInput() {
         return false;
+    }
+
+    private boolean isCraftingBlockedByRedstone() {
+        return this.level != null && this.level.hasNeighborSignal(this.worldPosition);
     }
 }
